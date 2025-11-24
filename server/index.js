@@ -31,6 +31,21 @@ res.json({result:"success",data:newdata});
 })
 
 
+app.delete("/:id",(req,res)=>{
+    const id = Number(req.params.id);
+    const file = fs.readFileSync("data.json");
+    const data = JSON.parse(file);
+    const filtered = data.filter(item => item.id !==id);
+    filtered.map((data,index)=>{
+        data.id=index+1;
+    })
+    fs.writeFileSync("data.json",JSON.stringify(filtered,null,2));
+
+    res.send({success:true});
+    
+})
+
+
 app.listen("5000",()=>{
     console.log("App successfully running");
 })

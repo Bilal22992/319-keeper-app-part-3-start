@@ -34,7 +34,8 @@ useEffect(() =>
 
 
   function addItem(title, note) {
-const Newdata = {title,note}
+    const id = notes.length +1;
+const Newdata = {id,title,note}
     fetch("http://localhost:5000",{
       method: "POST", 
       headers: {
@@ -59,6 +60,12 @@ const Newdata = {title,note}
   }
 
   function handleDelete(id) {
+
+fetch(`http://localhost:5000/${id}`,{
+
+  method:"DELETE"
+})
+
     setnotes((prev) => {
       return prev.filter((note, index) => {
         return index !== id;
@@ -78,7 +85,7 @@ const Newdata = {title,note}
         return (
           <Note
             key={index}
-            id={index}
+            id={note.id}
             title={note.title}
             content={note.note}
             delItem={handleDelete}
