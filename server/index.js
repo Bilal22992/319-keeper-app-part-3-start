@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 
 import fs from "fs";
-import { Interface } from "readline/promises";
+
 
 
 const app = express();
