@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 
 import fs from "fs";
+import { Interface } from "readline/promises";
 
 
 const app = express();
@@ -45,6 +46,20 @@ app.delete("/:id",(req,res)=>{
     
 })
 
+app.put("/:id",(req,res)=>{
+
+const file = fs.readFileSync("data.json");
+const oldData = JSON.parse(file);
+const newData= req.body;
+const id =parseInt( req.params.id);
+
+const index = oldData.findIndex(data=>data.id===id);
+
+oldData[index]={...oldData[index],...newData}
+fs.writeFileSync("data.json",JSON.stringify(oldData,null,2));
+res.send({success:true,data:oldData[index]})
+
+})
 
 app.listen("5000",()=>{
     console.log("App successfully running");

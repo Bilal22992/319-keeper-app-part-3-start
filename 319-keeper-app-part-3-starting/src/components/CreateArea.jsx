@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import AddIcon from '@mui/icons-material/Add';
 import Fab from '@mui/material/Fab';
 import Zoom from '@mui/material/Zoom';
+import { useEffect } from "react";
 function CreateArea(props) {
   const [title, setTitle] = useState("");
   const [note, setnote] = useState("");
@@ -12,7 +13,7 @@ const [Isclicked,setIsClicked]=useState(false);
     setTitle(value);
   }
 
-  function handleNoteChange() {
+  function handleNoteChange(event) {
     const value = event.target.value;
     setnote(value);
   }
@@ -20,6 +21,16 @@ const [Isclicked,setIsClicked]=useState(false);
   {
     setIsClicked(true);
   }
+
+useEffect(()=>{
+if(props.editItem)
+{
+setnote(props.editItem.note||"");
+setTitle(props.editItem.title||"");
+setIsClicked(true);
+}
+},[props.editItem])
+
 
   return (
     <div>

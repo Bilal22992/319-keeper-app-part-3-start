@@ -7,18 +7,23 @@ import CreateArea from "./CreateArea";
 
 function App() {
   const [notes, setnotes] = useState([]);
-  const[data,setdata]=useState([]);
+  const[data,setdata]=useState();
+  const[editValue,seteditValue]=useState(false)
 
 
 useEffect(() =>
 {
 
   const fetchNotes =() => {
-
+let isMounted=true;
   fetch("http://localhost:5000").then(
     response =>response.json()
 
-  ).then((comingdata)=> setnotes(comingdata))
+  ).then((comingdata)=>{
+    
+    if(isMounted)
+    {
+    setnotes(comingdata)}})
   }
   
   fetchNotes();
@@ -26,7 +31,12 @@ useEffect(() =>
 
   const Refresh= setInterval(fetchNotes,2000);
 
-  return () => clearInterval(Refresh);
+  return () => {
+
+    isMounted=false;
+    clearInterval(Refresh)
+  
+  };
     
   
 }, [])
@@ -34,6 +44,29 @@ useEffect(() =>
 
 
   function addItem(title, note) {
+
+   if(editValue)
+     {
+      const editdata={id:data.id,title,note}
+
+ fetch(`http://localhost:5000/${data.id}`,{
+      method: "PUT", 
+      headers: {
+        "Content-Type": "application/json", 
+      },
+      body: JSON.stringify(editdata), 
+    }).then(res=>res.json()).then((response)=>{
+      setnotes((prev)=>
+       prev.map(n=> (n.id ===data.id ? editdata:n))
+      )
+       console.log("server response",response);
+    })
+     
+    
+    seteditValue(false);
+    setdata(null);
+return;
+  }
     const id = notes.length +1;
 const Newdata = {id,title,note}
     fetch("http://localhost:5000",{
@@ -73,14 +106,30 @@ fetch(`http://localhost:5000/${id}`,{
     });
   }
 
+
+//handle the edit functionality
+
+function handleEdit (id)
+{
+ setdata( notes.find(note=>note.id===id));
+
+ seteditValue(true);
+
+
+
+}
+
+
   return (
     <div>
       <Header />
-      {data.map((data,index)=>{
+      {/* {data.map((data,index)=>{
        return <p key={index}>{data.title}</p>
       }
-    )}
-      <CreateArea additem={addItem} />
+    )} */}
+
+  
+      <CreateArea additem={addItem} editItem={data} />
       {notes.map((note, index) => {
         return (
           <Note
@@ -89,6 +138,7 @@ fetch(`http://localhost:5000/${id}`,{
             title={note.title}
             content={note.note}
             delItem={handleDelete}
+            Edit={handleEdit}
           />
         );
       })}

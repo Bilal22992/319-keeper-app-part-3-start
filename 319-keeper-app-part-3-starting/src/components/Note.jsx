@@ -12,6 +12,9 @@ function Note(props) {
       >
        <DeleteIcon/>
       </button>
+      <button onClick={()=>{
+        props.Edit(props.id)
+      }}>Edit</button>
     </div>
   );
 }
